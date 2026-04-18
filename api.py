@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from celery.result import AsyncResult
-from worker import generate_image
-from worker import app as celery_app
+from celery import Celery
 
 class PromptRequest(BaseModel):
     prompt: str
@@ -12,15 +11,23 @@ class PromptRequest(BaseModel):
     seed: int = 42
 
 app = FastAPI()
+celery_app = Celery(
+    'web_client',
+    broker='redis://localhost:6379/0', 
+    backend='redis://localhost:6379/0'
+)
 
 @app.post('/generate')
 def generate(request: PromptRequest):
-    task = generate_image.delay(
-        prompt=request.prompt,
-        negative_prompt=request.negative_prompt,
-        num_inference_steps=request.num_inference_steps,
-        cfg_scale=request.cfg_scale,
-        seed=request.seed
+    task = celery_app.send_task(
+        'worker.generate_image',
+        kwargs={
+            'prompt': request.prompt,
+            'negative_prompt': request.negative_prompt,
+            'num_inference_steps': request.num_inference_steps,
+            'cfg_scale': request.cfg_scale,
+            'seed': request.seed
+        }
     )
     result = {
         "job_id": task.id

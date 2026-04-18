@@ -5,6 +5,8 @@ import io
 import os
 from botocore.exceptions import ClientError
 from botocore.client import Config
+from dotenv import load_dotenv
+load_dotenv() 
 
 # 1. Grab the region from the environment
 aws_region = os.environ.get('AWS_DEFAULT_REGION')
@@ -18,8 +20,8 @@ s3_client = boto3.client(
 )
 app = Celery(
     'tasks', 
-    broker='redis://localhost:8765/0', 
-    backend='redis://localhost:8765/0'
+    broker='redis://18.188.188.54:6379/0', 
+    backend='redis://18.188.188.54:6379/0'
 )
 
 # Create an empty global variable to hold our model
