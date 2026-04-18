@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+streamlit
+redis
+celery
+boto3
+pydantic
