@@ -1,7 +1,11 @@
+import os
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 from celery.result import AsyncResult
 from celery import Celery
+from dotenv import load_dotenv
+load_dotenv() 
 
 class PromptRequest(BaseModel):
     prompt: str
@@ -11,10 +15,12 @@ class PromptRequest(BaseModel):
     seed: int = 42
 
 app = FastAPI()
+
+redis_url = os.environ.get('REDIS_URL')
 celery_app = Celery(
     'web_client',
-    broker='redis://localhost:6379/0', 
-    backend='redis://localhost:6379/0'
+    broker=redis_url, 
+    backend=redis_url
 )
 
 @app.post('/generate')
