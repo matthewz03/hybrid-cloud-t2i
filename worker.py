@@ -18,10 +18,12 @@ s3_client = boto3.client(
     endpoint_url=regional_endpoint,
     config=Config(signature_version='s3v4')
 )
+
+redis_url = os.environ.get('REDIS_URL')
 app = Celery(
     'tasks', 
-    broker='redis://3.137.147.225:6379/0', 
-    backend='redis://3.137.147.225:6379/0'
+    broker=redis_url, 
+    backend=redis_url
 )
 
 # Create an empty global variable to hold our model
