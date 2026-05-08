@@ -20,8 +20,8 @@ s3_client = boto3.client(
 )
 app = Celery(
     'tasks', 
-    broker='redis://18.188.188.54:6379/0', 
-    backend='redis://18.188.188.54:6379/0'
+    broker='redis://3.137.147.225:6379/0', 
+    backend='redis://3.137.147.225:6379/0'
 )
 
 # Create an empty global variable to hold our model
